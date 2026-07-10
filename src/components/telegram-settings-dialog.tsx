@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { Loader2, Send } from "lucide-react"
+import { ExternalLink, Loader2, Send } from "lucide-react"
 import { toast } from "sonner"
 
 import { sendTestNotificationAction } from "@/app/actions"
@@ -16,6 +16,9 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+
+const BOT_USERNAME = "nuranovdevDailybot"
+const BOT_URL = `https://t.me/${BOT_USERNAME}`
 
 interface TelegramSettingsDialogProps {
   open: boolean
@@ -68,6 +71,16 @@ export function TelegramSettingsDialog({
         </DialogHeader>
 
         <div className="space-y-4">
+          <a
+            href={BOT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 rounded-lg border border-input bg-background px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground"
+          >
+            <ExternalLink className="size-4" />
+            Open @{BOT_USERNAME}
+          </a>
+
           <div className="grid gap-2">
             <Label htmlFor="tg-chat-id">Chat ID</Label>
             <Input
@@ -84,12 +97,12 @@ export function TelegramSettingsDialog({
             <li>
               Open{" "}
               <a
-                href="https://t.me/nuranovdevDailybot"
+                href={BOT_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-medium text-foreground underline underline-offset-2"
               >
-                @nuranovdevDailybot
+                @{BOT_USERNAME}
               </a>{" "}
               and press <span className="font-medium">Start</span>.
             </li>
