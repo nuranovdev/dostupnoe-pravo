@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState, useTransition } from "react"
-import { AlertCircle, Plus, Scale, Search } from "lucide-react"
+import { AlertCircle, Bell, Plus, Scale, Search } from "lucide-react"
 import { toast } from "sonner"
 
 import {
@@ -14,6 +14,7 @@ import { ClientFormDialog } from "@/components/client-form-dialog"
 import { ClientsTable } from "@/components/clients-table"
 import { DeleteClientDialog } from "@/components/delete-client-dialog"
 import { StatsCards } from "@/components/stats-cards"
+import { TelegramSettingsDialog } from "@/components/telegram-settings-dialog"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -24,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useTelegramChatId } from "@/hooks/use-telegram-chat-id"
 import type { ClientFormValues } from "@/lib/validations"
 import {
   STATUS_LABELS,
@@ -57,6 +59,9 @@ export function Dashboard({ initialClients, loadError }: DashboardProps) {
 
   const [pendingId, setPendingId] = useState<string | null>(null)
 
+  const { chatId, setChatId } = useTelegramChatId()
+  const [settingsOpen, setSettingsOpen] = useState(false)
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
     return clients.filter((client) => {
@@ -85,7 +90,7 @@ export function Dashboard({ initialClients, loadError }: DashboardProps) {
       startSubmit(async () => {
         const result = editing
           ? await updateClientAction(editing.id, values)
-          : await createClientAction(values)
+          : await createClientAction(values, chatId)
 
         if (!result.ok) {
           toast.error(
@@ -179,10 +184,26 @@ export function Dashboard({ initialClients, loadError }: DashboardProps) {
             </p>
           </div>
         </div>
-        <Button onClick={openCreate} className="sm:w-auto">
-          <Plus className="size-4" />
-          Add client
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setSettingsOpen(true)}
+            title="Telegram notifications"
+          >
+            <Bell className="size-4" />
+            <span className="hidden sm:inline">Notifications</span>
+            {chatId && (
+              <span
+                className="ml-0.5 size-2 rounded-full bg-emerald-500"
+                aria-label="Telegram configured"
+              />
+            )}
+          </Button>
+          <Button onClick={openCreate}>
+            <Plus className="size-4" />
+            Add client
+          </Button>
+        </div>
       </header>
 
       {loadError && (
@@ -269,6 +290,14 @@ export function Dashboard({ initialClients, loadError }: DashboardProps) {
         client={deleteTarget}
         onConfirm={handleDelete}
         deleting={deleting}
+      />
+
+      <TelegramSettingsDialog
+        key={settingsOpen ? "settings-open" : "settings-closed"}
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        chatId={chatId}
+        onSave={setChatId}
       />
     </div>
   )

@@ -24,8 +24,10 @@ new client is created.
 - **UX states** — loading skeletons, empty states, error banner, and
   [Sonner](https://sonner.emilkowal.ski/) toast notifications on every mutation.
 - **Responsive** — works on desktop and mobile.
-- **Telegram notification (bonus)** — a message is sent when a client is created;
-  silently skipped if the bot token / chat id are not configured.
+- **Telegram notification (bonus)** — a message is sent when a client is created.
+  Each tester can set **their own** chat id from the in-app **Notifications**
+  dialog (stored per-browser) and send a test message to verify it. Falls back to
+  the server `TELEGRAM_CHAT_ID`; silently skipped if nothing is configured.
 
 ---
 
